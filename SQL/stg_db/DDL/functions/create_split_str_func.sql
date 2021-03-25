@@ -1,0 +1,14 @@
+DROP FUNCTION IF EXISTS FN_SPLIT_STR;
+# DELIMITER //
+CREATE FUNCTION `FN_SPLIT_STR`(
+  x VARCHAR(255),
+  delim VARCHAR(255),
+  pos INT
+) RETURNS VARCHAR(255) CHARSET utf8mb4
+    DETERMINISTIC
+BEGIN
+    DECLARE delim_substr VARCHAR(256);
+    set delim_substr=SUBSTRING_INDEX(x, delim, pos);
+    RETURN REPLACE(SUBSTRING(delim_substr,LENGTH(SUBSTRING_INDEX(x, delim, pos -1)) + 1),  delim, '');
+END;
+# DELIMITER //

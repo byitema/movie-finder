@@ -1,0 +1,1 @@
+insert into stg_movies values(%s,%s,%s);
