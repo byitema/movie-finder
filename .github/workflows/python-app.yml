@@ -9,15 +9,23 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-  DB_DATABASE: tp_project_movies_db
-  DB_USER: root
-  DB_PASSWORD: root
-
 jobs:  
   build:
 
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: tp_project_movies_db
+        ports:
+            - '8888:3306'
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      steps:
+        - uses: actions/checkout@v1
+        - run: mysql -h 127.0.0.1 --port 8888 -u root -p root -e 'CREATE DATABASE IF NOT EXISTS tp_project_movies_db;'
 
     steps:
     - uses: actions/checkout@v2
@@ -31,10 +39,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Set up MySQL
-      run: |
-        sudo /etc/init.d/mysql start
-        mysql -e 'CREATE DATABASE tp_project_movies_db;' -u root -p root
     - name: Lint with flake8
       run: |
         export PYTHONPATH=src
