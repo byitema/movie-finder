@@ -34,6 +34,11 @@ jobs:
     - name: Set up MySQL
       run: |
         sudo /etc/init.d/mysql start
+        create user 'root'@'localhost' identified by '757020Key';
+        create database tp_project_movies_db;
+        USE tp_project_movies_db;
+        GRANT ALL ON tp_project_movies_db.* TO 'root'@'localhost';
+        SET GLOBAL log_bin_trust_function_creators = 1;
     - name: Lint with flake8
       run: |
         export PYTHONPATH=src
