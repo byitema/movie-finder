@@ -34,7 +34,14 @@ jobs:
     - name: Set up MySQL
       run: |
         sudo /etc/init.d/mysql start
-        sudo mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u ${{ env.DB_USER }} -p ${{ env.DB_PASSWORD }}
+        root | sudo mysql_secure_installation
+        sudo mysql -u root -p root << MYSQL
+        create user 'root'@'localhost' identified by 'root';
+        create database tp_project_movies_db;
+        USE tp_project_movies_db;
+        GRANT ALL ON tp_project_movies_db.* TO 'root'@'localhost';
+        SET GLOBAL log_bin_trust_function_creators = 1;
+        MYSQL
     - name: Lint with flake8
       run: |
         export PYTHONPATH=src
