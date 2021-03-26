@@ -34,6 +34,7 @@ jobs:
     - name: Set up MySQL
       run: |
         sudo /etc/init.d/mysql start
+        sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';"
         root | sudo mysql_secure_installation
         sudo mysql -u root -p root << MYSQL
         create user 'root'@'localhost' identified by 'root';
