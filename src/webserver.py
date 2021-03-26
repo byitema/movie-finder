@@ -5,9 +5,9 @@ app = Flask(__name__)
 orm=ORMConnector()
 
 def request_handler():
-    body = request.json
-
     try:
+        body = request.json
+        
         if request.method == 'GET':
             return jsonify(orm.get_movies_list(body['top_number'], body['genres'], body['year_from'], body['year_to'], body['regexp']))
         elif request.method == 'POST':
