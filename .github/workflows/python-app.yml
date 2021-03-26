@@ -12,7 +12,7 @@ on:
 env:
   DB_DATABASE: tp_project_movies_db
   DB_USER: root
-  DB_PASSWORD: 757020Key
+  DB_PASSWORD: root
 
 jobs:  
   build:
