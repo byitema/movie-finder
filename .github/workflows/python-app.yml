@@ -34,8 +34,14 @@ jobs:
     - name: Set up MySQL
       run: |
         sudo /etc/init.d/mysql start
-        mysql -e "create user '${{ env.DB_DATABASE }}'@'localhost' identified by '${{ env.DB_PASSWORD }}';"
-        mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+        sudo mysql_secure_installation << -p${{ env.DB_PASSWORD }}
+        sudo mysql -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} << MYSQL
+        create user '${{ env.DB_USER }}'@'localhost' identified by '${{ env.DB_PASSWORD }}';
+        create database ${{ env.DB_DATABASE }};
+        USE ${{ env.DB_DATABASE }};
+        GRANT ALL ON ${{ env.DB_DATABASE }}.* TO '${{ env.DB_USER }}'@'localhost';
+        SET GLOBAL log_bin_trust_function_creators = 1;
+        MYSQL
     - name: Lint with flake8
       run: |
         export PYTHONPATH=src
