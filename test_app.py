@@ -1,5 +1,6 @@
-from webserver import index
-import flask
+from webserver import app, index
+from flask import current_app, jsonify
 
 def test_index():
-    assert index() == flask.jsonify({'error': 'wrong request'})
+    with app.app_context():
+        assert index() == jsonify({'error': 'wrong request'})
