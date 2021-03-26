@@ -9,6 +9,17 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  DB_DATABASE: tp_project_movies_db
+  DB_USER: root
+  DB_PASSWORD: 757020Key
+
+steps:
+  - name: Set up MySQL
+    run: |
+      sudo /etc/init.d/mysql start
+      mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+
 jobs:
   build:
 
