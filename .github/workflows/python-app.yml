@@ -22,23 +22,14 @@ jobs:
     services:
       mariadb:
         image: mariadb:latest
-        ports:
-          - 3306
-      env:
-        MYSQL_USER: root
-        MYSQL_PASSWORD: root
-        MYSQL_DATABASE: tp_project_movies_db
-        MYSQL_ROOT_PASSWORD: root
       options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Verify MariaDB connection
-      env:
-        PORT: ${{ job.services.mariadb.ports[3306] }}
       run: |
-        while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
+        while ! mysqladmin ping -h"127.0.0.1" -P"3306" --silent; do
           sleep 1
         done
 
