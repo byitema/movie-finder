@@ -42,7 +42,7 @@ jobs:
         mysql root password: 'root' # Required if "mysql user" is empty, default is empty. The root superuser password
         mysql user: 'root' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
         mysql password: 'root' # Required if "mysql user" exists. The password for the "mysql user"
-      - name: Lint with flake8
+    - name: Lint with flake8
       run: |
         export PYTHONPATH=src
         # stop the build if there are Python syntax errors or undefined names
