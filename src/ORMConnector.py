@@ -16,7 +16,7 @@ class ORMConnector:
     metadata = None
 
     def __init__(self):
-        self.engine = sqlalchemy.create_engine("mysql+pymysql://root:757020Key@localhost:32574/tp_project_movies_db",
+        self.engine = sqlalchemy.create_engine("mysql+pymysql://root:password@localhost:32574/tp_project_movies_db",
                                                echo=None)
         # self.Base = declarative_base()
         Base.metadata.create_all(self.engine)
