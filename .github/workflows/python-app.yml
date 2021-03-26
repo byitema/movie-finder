@@ -34,8 +34,6 @@ jobs:
     - name: Set up MySQL
       run: |
         sudo /etc/init.d/mysql start
-        mysql -u root
-        mysql -e 'CREATE DATABASE tp_project_movies_db;' -u root -p root
     - name: Lint with flake8
       run: |
         export PYTHONPATH=src
