@@ -1,0 +1,1 @@
+insert into stg_ratings values(%s,%s,%s,%s);
