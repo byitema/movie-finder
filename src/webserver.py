@@ -7,12 +7,15 @@ orm=ORMConnector()
 def request_handler():
     body = request.json
 
-    if request.method == 'GET':
-        return jsonify(orm.get_movies_list(body['top_number'], body['genres'], body['year_from'], body['year_to'], body['regexp']))
+    try:
+        if request.method == 'GET':
+            return jsonify(orm.get_movies_list(body['top_number'], body['genres'], body['year_from'], body['year_to'], body['regexp']))
 
-    elif request.method == 'POST':
-        orm.insert_new_rating(body['id'], body['rate'])
-        return jsonify({'response': 'OK'})
+        elif request.method == 'POST':
+            orm.insert_new_rating(body['id'], body['rate'])
+            return jsonify({'response': 'OK'})
+    except BaseException:
+        return jsonify({'error': 'wrong request'})
 
     return jsonify({'error': 'no such method'})
 
