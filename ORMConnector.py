@@ -1,12 +1,12 @@
 import sqlalchemy
-from sqlalchemy import Column, Table, MetaData, ForeignKey, PrimaryKeyConstraint
+from sqlalchemy import Column, Table, MetaData, ForeignKey, PrimaryKeyConstraint, cast, text
 from sqlalchemy import Integer, String, DateTime, SmallInteger, func, Float
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import pymysql
-from init import Base
+from movie_finder_db_and_orm_develop.init import Base
 import sqlite3
-from Movie import Movie
+from movie_finder_db_and_orm_develop.Movie import Movie
 import re
 
 
@@ -29,22 +29,30 @@ class ORMConnector:
                         regexp: str = None):
         from_request = self.session.query(Movie, func.row_number().over(Movie.genre).label("row_num"))
         if genres is not None:
-            from_request = from_request.where(Movie.genre in genres)
+            from_request = from_request.where(func.locate(Movie.genre, genres) > 0)
         if year_from is not None:
             from_request = from_request.where(year_from <= Movie.movie_year)
         if year_to is not None:
             from_request = from_request.where(year_to >= Movie.movie_year)
         if regexp is not None:
-            from_request = from_request.where(re.match(regexp, Movie.movie_name))
-        from_request = from_request.order_by(Movie.genre,Movie.rating.desc()).cte("temp")
-        genre, movie_id, movie_name, year, rating, count_of_ratings,_ = from_request.c
+            from_request = from_request.where(func.regexp_instr(Movie.movie_name, regexp) > 0)
+        from_request = from_request.order_by(Movie.genre, Movie.rating.desc()).cte("temp")
+        genre, movie_id, movie_name, year, rating, count_of_ratings, _ = from_request.c
 
         main_request = self.session.query(genre, movie_id, movie_name, year, rating, count_of_ratings)
         row_num = from_request.c.row_num
         if N is not None:
             main_request = main_request.where(row_num <= N)
-        # print(main_request)
-        return list(main_request.all())
+        print(main_request)
+        print(main_request.all())
+        result_dict = {}
+        for genre, movie_id, movie_name, movie_year, rating, count_of_ratings in main_request.all():
+            if genre not in result_dict.keys():
+                result_dict[genre] = []
+            result_dict[genre].append(
+                dict(movie_id=movie_id, movie_name=movie_name, movie_year=movie_year, rating=rating,
+                     count_of_ratings=count_of_ratings))
+        return result_dict
 
     def insert_new_rating(self, movie_id: int, rating: float):
         # print(self.session.query(Movie).where(Movie.movie_id == movie_id))
@@ -55,11 +63,3 @@ class ORMConnector:
             movie.count_of_ratings += 1
             movie.rating = temp_rating
         self.session.commit()
-
-
-if __name__ == "__main__":
-    orm = ORMConnector()
-    # print(orm.session.execute("show tables from tp_project_movies_db;").fetchall())
-    for movie in orm.get_movies_list(N=10, year_from=2010):
-        print(movie)
-    # orm.insert_new_rating(1, 4)
