@@ -33,7 +33,8 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Set up MySQL
       run: |
-        sudo /etc/init.d/mysql start
+        sudo mysql start
+        sudo mysql ALTER USER 'root'@'localhost' IDENTIFIED WITH '757020Key' BY 'root';
     - name: Lint with flake8
       run: |
         export PYTHONPATH=src
