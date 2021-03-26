@@ -34,7 +34,7 @@ jobs:
     - name: Set up MySQL
       run: |
         sudo /etc/init.d/mysql start
-        sudo mysql_secure_installation < -p${{ env.DB_PASSWORD }}
+        ${{ env.DB_PASSWORD }} | sudo mysql_secure_installation
         sudo mysql -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} << MYSQL
         create user '${{ env.DB_USER }}'@'localhost' identified by '${{ env.DB_PASSWORD }}';
         create database ${{ env.DB_DATABASE }};
