@@ -1,0 +1,22 @@
+DROP FUNCTION IF EXISTS FN_GET_YEAR_FROM_TITLE;
+# DELIMITER //
+CREATE FUNCTION `FN_GET_YEAR_FROM_TITLE`(
+	title VARCHAR(256)
+) RETURNS INT
+DETERMINISTIC
+BEGIN
+	DECLARE year_str VARCHAR(20);
+    DECLARE minus_index TINYINT UNSIGNED;
+    SET year_str = REGEXP_SUBSTR(title,"\\((([0-9]{4}\\-[0-9]{4})|([0-9]{4}))\\)\\s?$");
+    IF year_str IS NULL THEN
+		RETURN NULL;
+	ELSE
+		SET minus_index = LOCATE('-',year_str);
+		IF minus_index > 0 THEN
+			RETURN CAST(SUBSTR(year_str,minus_index+1,4) AS UNSIGNED INTEGER);
+		ELSE
+			RETURN CAST(SUBSTR(year_str,2,4) AS UNSIGNED INTEGER);
+		END IF;
+	END IF;
+END;
+# DELIMITER //
