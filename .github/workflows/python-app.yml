@@ -34,7 +34,6 @@ jobs:
     - name: Set up MySQL
       run: |
         sudo mysql start
-        sudo mysql ALTER USER 'root'@'localhost' IDENTIFIED WITH 757020Key BY 'root';
     - name: Lint with flake8
       run: |
         export PYTHONPATH=src
