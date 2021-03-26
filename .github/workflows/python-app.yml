@@ -9,18 +9,12 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-  DB_DATABASE: tp_project_movies_db
-  DB_USER: root
-  DB_PASSWORD: 757020Key
-
-steps:
-  - name: Set up MySQL
-    run: |
-      sudo /etc/init.d/mysql start
-      mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
-
 jobs:
+  env:
+    DB_DATABASE: tp_project_movies_db
+    DB_USER: root
+    DB_PASSWORD: 757020Key
+  
   build:
 
     runs-on: ubuntu-latest
@@ -37,6 +31,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Set up MySQL
+      run: |
+        sudo /etc/init.d/mysql start
+        mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
     - name: Lint with flake8
       run: |
         export PYTHONPATH=src
