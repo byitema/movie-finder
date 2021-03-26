@@ -9,12 +9,12 @@ on:
   pull_request:
     branches: [ main ]
 
-jobs:
-  env:
-    DB_DATABASE: tp_project_movies_db
-    DB_USER: root
-    DB_PASSWORD: 757020Key
-  
+env:
+  DB_DATABASE: tp_project_movies_db
+  DB_USER: root
+  DB_PASSWORD: 757020Key
+
+jobs:  
   build:
 
     runs-on: ubuntu-latest
