@@ -1,0 +1,6 @@
+flask
+pytest
+sqlalchemy
+pymysql
+mysql
+cryptography
