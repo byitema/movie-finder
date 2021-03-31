@@ -4,3 +4,4 @@ sqlalchemy
 pymysql
 mysql
 cryptography
+gunicorn
