@@ -41,9 +41,9 @@ def main():
         for file in glob.iglob("../sql/*/ddl/*/*.sql"):
             execute_script(conn, file)
 
-        insert_data_from_file(conn, "../sql/movies_db/dml/TEMPLATE/insert_movies_data_template.sql",
+        insert_data_from_file(conn, "../sql/movies_db/dml/template/insert_movies_data_template.sql",
                               "../data/movies.csv")
-        insert_data_from_file(conn, "../sql/movies_db/dml/TEMPLATE/insert_ratings_data_template.sql",
+        insert_data_from_file(conn, "../sql/movies_db/dml/template/insert_ratings_data_template.sql",
                               "../data/ratings.csv")
 
         execute_procedure(conn, "tp_project_movies_db.sp_fill_movies")
