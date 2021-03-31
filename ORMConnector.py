@@ -1,24 +1,28 @@
 import sqlalchemy
 from sqlalchemy import Column, Table, MetaData, ForeignKey, PrimaryKeyConstraint, cast, text
 from sqlalchemy import Integer, String, DateTime, SmallInteger, func, Float
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.engine import Engine
+from sqlalchemy.orm import relationship, sessionmaker, Session
 from sqlalchemy.ext.declarative import declarative_base
 import pymysql
-from movie_finder_db_and_orm_develop.init import Base
+from init import Base
 import sqlite3
-from movie_finder_db_and_orm_develop.Movie import Movie
+from Movie import Movie
 import re
+import configparser
 
 
 class ORMConnector:
-    engine: sqlalchemy.engine.Engine = None
-    session: sqlalchemy.orm.Session = None
-    metadata = None
+    engine: Engine = None
+    session: Session = None
+    metadata: MetaData = None
 
     def __init__(self):
-        self.engine = sqlalchemy.create_engine("mysql+pymysql://root:757020Key@localhost/tp_project_movies_db",
-                                               echo=None)
-        # self.Base = declarative_base()
+        config = configparser.ConfigParser()
+        config.read("../configs/configs.ini")
+        self.engine = sqlalchemy.create_engine(
+            f"mysql+pymysql://{config['MySQL']['user']}:{config['MySQL']['password']}@{config['MySQL']['host']}/{config['MySQL']['database']}",
+            echo=None)
         Base.metadata.create_all(self.engine)
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
@@ -43,8 +47,6 @@ class ORMConnector:
         row_num = from_request.c.row_num
         if N is not None:
             main_request = main_request.where(row_num <= N)
-        print(main_request)
-        print(main_request.all())
         result_dict = {}
         for genre, movie_id, movie_name, movie_year, rating, count_of_ratings in main_request.all():
             if genre not in result_dict.keys():
@@ -55,7 +57,6 @@ class ORMConnector:
         return result_dict
 
     def insert_new_rating(self, movie_id: int, rating: float):
-        # print(self.session.query(Movie).where(Movie.movie_id == movie_id))
         movies = self.session.query(Movie).where(Movie.movie_id == movie_id).all()
         for movie in movies:
             temp_rating = movie.count_of_ratings * movie.rating
