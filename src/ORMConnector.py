@@ -21,7 +21,7 @@ class ORMConnector:
         config = configparser.ConfigParser()
         config.read("configs/configs.ini")
         self.engine = sqlalchemy.create_engine(
-            f"mysql+pymysql://{config['MySQL']['user']}:{config['MySQL']['password']}@{config['MySQL']['host']}/{config['MySQL']['database']}",
+            f"mysql+pymysql://root:757020Key@localhost/tp_project_movies_db",
             echo=None)
         Base.metadata.create_all(self.engine)
         Session = sessionmaker(bind=self.engine)
