@@ -19,7 +19,7 @@ class ORMConnector:
 
     def __init__(self):
         config = configparser.ConfigParser()
-        config.read("../configs/configs.ini")
+        config.read("configs/configs.ini")
         self.engine = sqlalchemy.create_engine(
             f"mysql+pymysql://{config['MySQL']['user']}:{config['MySQL']['password']}@{config['MySQL']['host']}/{config['MySQL']['database']}",
             echo=None)
