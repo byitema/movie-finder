@@ -1,6 +1,6 @@
-DROP PROCEDURE IF EXISTS movies_db.sp_find_movies;
+DROP PROCEDURE IF EXISTS sp_find_movies;
 # DELIMITER //
-CREATE PROCEDURE movies_db.`sp_find_movies`(
+CREATE PROCEDURE `sp_find_movies`(
 	IN N INT UNSIGNED,
     IN genres VARCHAR(256),
     IN year_from SMALLINT,
