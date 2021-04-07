@@ -41,16 +41,8 @@ class ORMConnector(object):
             row_num = from_request.c.row_num
             if N is not None:
                 main_request = main_request.where(row_num <= N)
-            # result_dict = {}
             main_request_result = await session.execute(main_request)
             return main_request_result.paginate(page, self.PAGE_SIZE, False).items
-            # for genre, movie_id, movie_name, movie_year, rating, count_of_ratings in main_request_result.all():
-            #     if genre not in result_dict.keys():
-            #         result_dict[genre] = []
-            #     result_dict[genre].append(
-            #         dict(movie_id=movie_id, movie_name=movie_name, movie_year=movie_year, rating=rating,
-            #              count_of_ratings=count_of_ratings))
-            # return result_dict
 
     async def insert_new_rating(self, movie_id: int, rating: float):
         async with self.async_session() as session:
