@@ -3,7 +3,7 @@ from sqlalchemy import Column, Table, MetaData, ForeignKey, PrimaryKeyConstraint
 from sqlalchemy import Integer, String, DateTime, SmallInteger, func, Float
 from sqlalchemy.engine import Engine
 from sqlalchemy.future import select
-from sqlalchemy.orm import relationship, sessionmaker, Session
+from sqlalchemy.orm import relationship, sessionmaker, Session, Query
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine, AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 import pymysql
@@ -19,8 +19,10 @@ class ORMConnector(object):
     engine: AsyncEngine = None
     async_session = None
     metadata: MetaData = None
+    PAGE_SIZE: int = None
 
-    async def get_movies_list(self, N: int = None, genres: str = None, year_from: int = None, year_to: int = None,
+    async def get_movies_list(self, page: int = 1, N: int = None, genres: str = None, year_from: int = None,
+                              year_to: int = None,
                               regexp: str = None):
         async with self.async_session() as session:
             from_request = select(Movie, func.row_number().over(Movie.genre).label("row_num"))
@@ -39,15 +41,16 @@ class ORMConnector(object):
             row_num = from_request.c.row_num
             if N is not None:
                 main_request = main_request.where(row_num <= N)
-            result_dict = {}
+            # result_dict = {}
             main_request_result = await session.execute(main_request)
-            for genre, movie_id, movie_name, movie_year, rating, count_of_ratings in main_request_result.all():
-                if genre not in result_dict.keys():
-                    result_dict[genre] = []
-                result_dict[genre].append(
-                    dict(movie_id=movie_id, movie_name=movie_name, movie_year=movie_year, rating=rating,
-                         count_of_ratings=count_of_ratings))
-            return result_dict
+            return main_request_result.paginate(page, self.PAGE_SIZE, False).items
+            # for genre, movie_id, movie_name, movie_year, rating, count_of_ratings in main_request_result.all():
+            #     if genre not in result_dict.keys():
+            #         result_dict[genre] = []
+            #     result_dict[genre].append(
+            #         dict(movie_id=movie_id, movie_name=movie_name, movie_year=movie_year, rating=rating,
+            #              count_of_ratings=count_of_ratings))
+            # return result_dict
 
     async def insert_new_rating(self, movie_id: int, rating: float):
         async with self.async_session() as session:
@@ -65,6 +68,7 @@ async def create_connector() -> ORMConnector:
     config = configparser.ConfigParser()
     config.read("configs/configs.ini")
     connector = ORMConnector()
+    connector.PAGE_SIZE = config["MySQL"]["PAGE_SIZE"]
     connector.engine = create_async_engine(
         f"mysql+aiomysql://root:757020Key@localhost/tp_project_movies_db",
         echo=False)
