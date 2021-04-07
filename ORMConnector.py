@@ -1,3 +1,4 @@
+import asyncio
 import sqlalchemy
 from sqlalchemy import Column, Table, MetaData, ForeignKey, PrimaryKeyConstraint, cast, text
 from sqlalchemy import Integer, String, DateTime, SmallInteger, func, Float
@@ -63,7 +64,7 @@ async def create_connector() -> ORMConnector:
     connector.PAGE_SIZE = config["MySQL"]["PAGE_SIZE"]
     connector.engine = create_async_engine(
         f"mysql+aiomysql://root:757020Key@localhost/tp_project_movies_db",
-        echo=False)
+        echo=False, encoding="UTF-8")
     async with connector.engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
