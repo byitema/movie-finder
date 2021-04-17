@@ -14,6 +14,8 @@ from Movie import Movie
 import re
 import configparser
 from sqlalchemy.dialects import mysql
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 
 class ORMConnector(object):
@@ -42,8 +44,14 @@ class ORMConnector(object):
             row_num = from_request.c.row_num
             if N is not None:
                 main_request = main_request.where(row_num <= N)
+            main_request = main_request.offset(page * self.PAGE_SIZE)
             main_request_result = await session.execute(main_request)
-            return main_request_result.paginate(page, self.PAGE_SIZE, False).items
+            result_dict = {}
+            for genre, _, name, year, rating, _ in main_request_result.all():
+                if genre not in result_dict.keys():
+                    result_dict[genre] = []
+                result_dict[genre].append((name, year, rating))
+            return result_dict
 
     async def insert_new_rating(self, movie_id: int, rating: float):
         async with self.async_session() as session:
