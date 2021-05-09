@@ -40,8 +40,17 @@ class MainViewController : UIViewController {
             }
         }
     
-        
+    if !GlobalVariable.MOVIES.isEqual(to: NSMutableOrderedSet()){
        performSegue(withIdentifier: "FromStartToMain", sender: self);
+    } else {
+        let refreshAlert = UIAlertController(title: "Oops..", message: "Nothing found", preferredStyle: UIAlertController.Style.alert)
+
+        refreshAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+              print("Ok Alert")
+        }))
+
+        present(refreshAlert, animated: true, completion: nil)
+    }
    }
     
     func getMovies(){
@@ -67,7 +76,7 @@ class MainViewController : UIViewController {
         let jsonData = try? JSONSerialization.data(withJSONObject: json)
 
         // create post request
-        let url = URL(string: "https://eee33e85c2df.ngrok.io/")!
+        let url = URL(string: "https://91413471fad9.ngrok.io/")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")

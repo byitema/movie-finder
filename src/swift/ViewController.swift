@@ -24,7 +24,7 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
         // Configure the cell
         cell.layer.borderColor = UIColor.orange.cgColor
         cell.layer.borderWidth = 3
-        
+        cell.layer.frame = CGRect(x: cell.layer.frame.minX+20, y: cell.layer.frame.minY, width: self.view.frame.size.width - 50, height: 142)
         cell.Name.text = movieInfo.object(forKey: "movie_name") as! String
         let tmp = movieInfo.object(forKey: "movie_year") as! NSNumber;
         cell.Year.text = "Year: \(tmp.description)"
@@ -37,7 +37,12 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
         
         return cell
     }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize
+    {
 
+        return CGSize(width: (self.view.frame.size.width), height: (self.view.frame.size.height))
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -73,16 +78,29 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
                     index += 1
                 }
             }
-            var indexPathsNeedToReload = [IndexPath]()
+            
+            if !MainViewController.GlobalVariable.MOVIES.isEqual(to: NSMutableOrderedSet()){
+                var indexPathsNeedToReload = [IndexPath]()
 
-            for cell in ViewCollection.visibleCells {
-              let indexPath: IndexPath = ViewCollection.indexPath(for: cell)!
+                for cell in ViewCollection.visibleCells {
+                  let indexPath: IndexPath = ViewCollection.indexPath(for: cell)!
 
-                indexPathsNeedToReload.append(indexPath)
-              
+                    indexPathsNeedToReload.append(indexPath)
+                  
+                }
+
+                ViewCollection.reloadItems(at: indexPathsNeedToReload)
+            } else {
+                let refreshAlert = UIAlertController(title: "Oops..", message: "Nothing found", preferredStyle: UIAlertController.Style.alert)
+
+                refreshAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+                      print("Ok Alert")
+                }))
+
+                present(refreshAlert, animated: true, completion: nil)
             }
-
-            ViewCollection.reloadItems(at: indexPathsNeedToReload)
+            
+            
         }
     }
     
@@ -107,16 +125,26 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
                     index += 1
                 }
             }
-            var indexPathsNeedToReload = [IndexPath]()
+            if !MainViewController.GlobalVariable.MOVIES.isEqual(to: NSMutableOrderedSet()){
+                var indexPathsNeedToReload = [IndexPath]()
 
-            for cell in ViewCollection.visibleCells {
-              let indexPath: IndexPath = ViewCollection.indexPath(for: cell)!
+                for cell in ViewCollection.visibleCells {
+                  let indexPath: IndexPath = ViewCollection.indexPath(for: cell)!
 
-                indexPathsNeedToReload.append(indexPath)
-              
+                    indexPathsNeedToReload.append(indexPath)
+                  
+                }
+
+                ViewCollection.reloadItems(at: indexPathsNeedToReload)
+            } else {
+                let refreshAlert = UIAlertController(title: "Oops..", message: "Nothing found", preferredStyle: UIAlertController.Style.alert)
+
+                refreshAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+                      print("Ok Alert")
+                }))
+
+                present(refreshAlert, animated: true, completion: nil)
             }
-
-            ViewCollection.reloadItems(at: indexPathsNeedToReload)
         }
         
     }
@@ -129,7 +157,7 @@ class ViewController: UIViewController,UICollectionViewDataSource,UICollectionVi
         let jsonData = try? JSONSerialization.data(withJSONObject: json)
 
         // create post request
-        let url = URL(string: ("https://eee33e85c2df.ngrok.io/" + "\(Int(PageNumberTextField.text!)!)"))!
+        let url = URL(string: ("https://91413471fad9.ngrok.io/" + "\(Int(PageNumberTextField.text!)!)"))!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
