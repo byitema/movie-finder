@@ -11,7 +11,7 @@ def get_connection() -> mysql.connector.connection:
     :return: Connection-class object to MySQL database
     """
     config = configparser.ConfigParser()
-    config.read("../Configs/configs.ini")
+    config.read("../configs/configs.ini")
     return mysql.connector.connect(host=config["MySQL"]["host"],
                                    user=config["MySQL"]["user"],
                                    password=config["MySQL"]["password"],
@@ -38,12 +38,12 @@ def main():
     conn = None
     try:
         conn = get_connection()
-        for file in glob.iglob("../SQL/*/DDL/*/*.sql"):
+        for file in glob.iglob("../sql/*/ddl/*/*.sql"):
             execute_script(conn, file)
 
-        insert_data_from_file(conn, "../SQL/stg_db/DML/TEMPLATE/insert_movies_data_template.sql",
+        insert_data_from_file(conn, "../sql/movies_db/dml/template/insert_movies_data_template.sql",
                               "../data/movies.csv")
-        insert_data_from_file(conn, "../SQL/stg_db/DML/TEMPLATE/insert_ratings_data_template.sql",
+        insert_data_from_file(conn, "../sql/movies_db/dml/template/insert_ratings_data_template.sql",
                               "../data/ratings.csv")
 
         execute_procedure(conn, "tp_project_movies_db.sp_fill_movies")

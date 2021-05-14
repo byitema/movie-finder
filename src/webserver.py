@@ -2,7 +2,7 @@ from flask import request, Flask, jsonify
 from ORMConnector import ORMConnector
 
 app = Flask(__name__)
-orm=ORMConnector()
+orm = ORMConnector()
 
 def request_handler():
     try:
